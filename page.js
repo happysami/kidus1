@@ -7,6 +7,17 @@ export default function Home() {
   const [currentTab, setCurrentTab] = useState('processing');
   const [importText, setImportText] = useState("");
   const [detectedNames, setDetectedNames] = useState([]);
+  
+  // 1. አዲስ፡ የተመረጠውን ኦፊሰር ለመያዝ የተጨመረ State
+  const [selectedOfficer, setSelectedOfficer] = useState("");
+
+  // የኦፊሰሮች ዝርዝር ናሙና
+  const officersList = [
+    "Kidusyared Liku",
+    "Abebe Kebede",
+    "Aster Chaltu",
+    "Marta Alemu"
+  ];
 
   // በሲስተሙ ላይ ያሉ የደንበኛ ሪከርድ ቁጥሮች ናሙና
   const [counts] = useState({
@@ -33,6 +44,44 @@ export default function Home() {
     setDetectedNames(found);
   };
 
+  // 2. ተጠቃሚው (Officer) ገና ካልመረጠ መጀመሪያ ይህ የ Dropdown መምረጫ ገጽ ይታያል
+  if (!selectedOfficer) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-slate-100 font-sans antialiased p-4">
+        <div className="bg-white p-8 rounded-xl border border-slate-200 shadow-md max-w-md w-full space-y-6">
+          <div className="text-center">
+            <h2 className="text-xl font-bold text-purple-900">Digaf MFI Terminal</h2>
+            <p className="text-xs text-slate-400 mt-1">እባክዎ መጀመሪያ ተጠቃሚ (Officer) ይምረጡ</p>
+          </div>
+          
+          <div className="space-y-2">
+            <label htmlFor="officer-select" className="text-xs font-bold text-slate-600 uppercase tracking-wide">
+              የኦፊሰር ስም / Officer Name
+            </label>
+            <select
+              id="officer-select"
+              onChange={(e) => setSelectedOfficer(e.target.value)}
+              defaultValue=""
+              className="w-full p-3 bg-white border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:border-purple-500 shadow-sm"
+            >
+              <option value="" disabled hidden>-- ኦፊሰር ይምረጡ --</option>
+              {officersList.map((officer, index) => (
+                <option key={index} value={officer}>
+                  {officer}
+                </option>
+              ))}
+            </select>
+          </div>
+          
+          <p className="text-[10px] text-center text-slate-400 leading-relaxed">
+            Secure workstation terminal login. Actions performed here will be bound to the selected identity.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  // 3. ኦፊሰር ከተመረጠ በኋላ ይህ ዋናው ሲስተም ይከፈታል
   return (
     <div className="flex h-screen bg-slate-100 font-sans antialiased">
       {/* የጎን ማውጫ */}
@@ -40,7 +89,8 @@ export default function Home() {
 
       {/* ዋናው ገጽ */}
       <div className="flex-1 flex flex-col overflow-hidden">
-        <Header activeOfficer="Kidusyared Liku" />
+        {/* የነበረው ቋሚ ስም በተመረጠው ኦፊሰር (selectedOfficer) ተተክቷል */}
+        <Header activeOfficer={selectedOfficer} />
 
         <main className="flex-1 overflow-x-hidden overflow-y-auto p-6">
           {currentTab === 'processing' && (
@@ -53,7 +103,7 @@ export default function Home() {
                 </h2>
                 <p className="text-xs text-slate-400 mt-1 max-w-2xl">
                   Secure workstation terminal bound directly to this PC. Actions are permanent and non-repudiable. 
-                  እያንዳንዱ የምታሳልፈው ውሳኔ በአንተ ስም በቋሚነት ይመዘገባል።
+                  እያንዳንዱ የምታሳልፈው ውሳኔ በአንተ ስም (<span className="font-bold text-purple-700">{selectedOfficer}</span>) በቋሚነት ይመዘገባል።
                 </p>
               </div>
 
